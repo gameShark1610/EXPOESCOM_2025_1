@@ -28,14 +28,14 @@ typedef unsigned char boolean;
 typedef struct elemento
 {
 	//Variables de la estructura "elemento" (El usuario puede modificar)
-	int n;
+	int tiempoTotalDeEjecucion;
 	//Variable para la simulacion de procesos del sistema operativo
 	char nombre[45]; //Nombre del proceso
 	char actividad[200]; //Actividad que realiza dicho procesp
 	char id[45]; //Identificador unico del proceso
 	int tiempo; //Quatum de tiempo del proceso
-	clock_t tiempoInicio;
-	double tiempoTotal;
+	clock_t tiempoInicio; //Variable que empieza a medir e tiempo de vida del proceso
+	double tiempoTotal; //Tiempo general del elemento en proceso
 	//***
 	//***
 	//***

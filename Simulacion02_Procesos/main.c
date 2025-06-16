@@ -57,6 +57,7 @@ clock_t fin; //Variable que permite
 
 int main()
 {
+    system("chcp 65001 > nul");  // Cambia a UTF-8
     int xTitulo, yTitulo;   //Dimensiones del titulo (opcionales a mostrar en consola)
     
     BorrarPantalla();   
@@ -121,6 +122,7 @@ elemento generarProceso()
     printf("Tiempo para su atencion: ");
     MoverCursor(75,4);
     scanf("%d", &proceso.tiempo);
+    proceso.tiempoTotalDeEjecucion=proceso.tiempo;
 
     return proceso;
 }
@@ -250,32 +252,21 @@ void atenderProceso()
 
         fin = clock(); //Se para el tiempo de vida del proceso, para mostrar en tiempo real el tiempo del mismo desde que fue encolado por primera vez
         procesoAtendido.tiempoTotal = (double)(fin - procesoAtendido.tiempoInicio) / CLOCKS_PER_SEC; //se imprime el tiempo
-        progreso = (procesoAtendido.tiempoTotal / procesoAtendido.tiempo) * barraTotal;
+        //progreso = (procesoAtendido.tiempoTotalDeEjecucion / (procesoAtendido.tiempoTotalDeEjecucion-procesoAtendido.tiempo)) * barraTotal;
         MoverCursor(28 ,10);
-        /*printf("╔══════════════════════════════════════════════════════════════════════╗\n");
-        printf("║                             MONITOR DE CPU                           ║\n");
-        printf("╠══════════════════════════════════════════════════════════════════════╣\n");
-        printf("║                             [ EN EJECUCIÓN ]                         ║\n");
-        printf("║----------------------------------------------------------------------║\n");
-        printf("║ Proceso: %-15s ID: %-5s                                  ║\n", procesoAtendido.nombre, procesoAtendido.id);
-        printf("║ Actividad: %-50s║\n", procesoAtendido.actividad);
-        printf("║ Tiempo transcurrido: %5.2f s                                         ║\n", procesoAtendido.tiempoTotal);
-        printf("║                                                                      ║\n");
-
-        printf("║ ");
+        printf("Proceso: %-15s ID: %-5s", procesoAtendido.nombre, procesoAtendido.id);
+        MoverCursor(28 ,11);
+        printf("Actividad: %-50s", procesoAtendido.actividad);
+        MoverCursor(28 ,12);
+        printf("Tiempo transcurrido: %5.2f s", procesoAtendido.tiempoTotal);
+        /*
+        MoverCursor(32 ,12);
         for (int i = 0; i < barraTotal; i++) {
             if (i < progreso) printf("▓");
             else printf("░");
-        }
-        printf(" %3.0f%%                  ║\n", (procesoAtendido.tiempoTotal / procesoAtendido.tiempo) * 100);
-        printf("║----------------------------------------------------------------------║\n");
-        printf("╚══════════════════════════════════════════════════════════════════════╝\n");*/
-        printf("ATENDIENDO EL PROCESO..   | %d seg restantes(s)",procesoAtendido.tiempo);
-        MoverCursor(28,11);
-        printf("-------------------------------------------------------------------");
-        MoverCursor(28,12);
-        
-        printf("%-10s | %-10s | %-5s | %.2f s", procesoAtendido.nombre, procesoAtendido.actividad, procesoAtendido.id, procesoAtendido.tiempoTotal);
+        }*/
+        MoverCursor(28 ,13);
+        printf("Variable tiempo:%d TiempoTotalEjec:%d %d %%\n",procesoAtendido.tiempo,procesoAtendido.tiempoTotalDeEjecucion, (((procesoAtendido.tiempoTotalDeEjecucion-procesoAtendido.tiempo)*100)/procesoAtendido.tiempoTotalDeEjecucion));
         Sleep(1000); //Quantum de 1 segundo, se atenderá el proceso durante este tiempo
         borrarAnimacionProceso1();
         procesoAtendido.tiempo--; //Se disminuye el quantum de 1 segundo al tiempo total de ejecucion del proceso
@@ -391,6 +382,15 @@ void dibujarCaja()
         EsperarMiliSeg(TIEMPO_BASE);
         printf("\033[38;5;228m═");
         printf("\033[0m");
+
+        if (i>0 && i<(ANCHO-1))
+        {
+            MoverCursor(x + i, y+ALTO-3);
+            printf("\033[38;5;228m-");  //Cambio de color a verde
+            printf("\033[0m"); 
+        }
+        
+        
     }
     MoverCursor(x, y+ALTO-1);
     printf("\033[38;5;228m╚");
