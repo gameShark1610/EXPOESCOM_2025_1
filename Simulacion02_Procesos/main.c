@@ -41,7 +41,7 @@ void dibujarCuadro1();
 void dibujarCuadro2();
 
 #define TIEMPO_BASE 3
-#define ALTO 8      //Alto de la caja principal
+#define ALTO 12      //Alto de la caja principal
 #define ANCHO 80    //Ancho de la caja principal
 //Se piensa una consola de 120x30   
 #define ANCHOSHELL 132  
@@ -232,6 +232,8 @@ void atenderProceso()
     int y=12;
     int yImpresion=23;
     int i;
+    int barraTotal=40;
+    int progreso;
 
     while(!Empty(&c)) //Mientras la cola no esté vacía
     {
@@ -245,14 +247,34 @@ void atenderProceso()
             MoverCursor(28, i);
             printf("                                                                             ");
         }
-        
+
+        fin = clock(); //Se para el tiempo de vida del proceso, para mostrar en tiempo real el tiempo del mismo desde que fue encolado por primera vez
+        procesoAtendido.tiempoTotal = (double)(fin - procesoAtendido.tiempoInicio) / CLOCKS_PER_SEC; //se imprime el tiempo
+        progreso = (procesoAtendido.tiempoTotal / procesoAtendido.tiempo) * barraTotal;
         MoverCursor(28 ,10);
+        /*printf("╔══════════════════════════════════════════════════════════════════════╗\n");
+        printf("║                             MONITOR DE CPU                           ║\n");
+        printf("╠══════════════════════════════════════════════════════════════════════╣\n");
+        printf("║                             [ EN EJECUCIÓN ]                         ║\n");
+        printf("║----------------------------------------------------------------------║\n");
+        printf("║ Proceso: %-15s ID: %-5s                                  ║\n", procesoAtendido.nombre, procesoAtendido.id);
+        printf("║ Actividad: %-50s║\n", procesoAtendido.actividad);
+        printf("║ Tiempo transcurrido: %5.2f s                                         ║\n", procesoAtendido.tiempoTotal);
+        printf("║                                                                      ║\n");
+
+        printf("║ ");
+        for (int i = 0; i < barraTotal; i++) {
+            if (i < progreso) printf("▓");
+            else printf("░");
+        }
+        printf(" %3.0f%%                  ║\n", (procesoAtendido.tiempoTotal / procesoAtendido.tiempo) * 100);
+        printf("║----------------------------------------------------------------------║\n");
+        printf("╚══════════════════════════════════════════════════════════════════════╝\n");*/
         printf("ATENDIENDO EL PROCESO..   | %d seg restantes(s)",procesoAtendido.tiempo);
         MoverCursor(28,11);
         printf("-------------------------------------------------------------------");
         MoverCursor(28,12);
-        fin = clock(); //Se para el tiempo de vida del proceso, para mostrar en tiempo real el tiempo del mismo desde que fue encolado por primera vez
-        procesoAtendido.tiempoTotal = (double)(fin - procesoAtendido.tiempoInicio) / CLOCKS_PER_SEC; //se imprime el tiempo
+        
         printf("%-10s | %-10s | %-5s | %.2f s", procesoAtendido.nombre, procesoAtendido.actividad, procesoAtendido.id, procesoAtendido.tiempoTotal);
         Sleep(1000); //Quantum de 1 segundo, se atenderá el proceso durante este tiempo
         borrarAnimacionProceso1();
@@ -324,36 +346,62 @@ Observaciones: Se dibuja la pantalla principal al centro de la pantalla. Las coo
 void dibujarCaja()
 {
     int x = (ANCHOSHELL-ANCHO)/2;    
-    int y = 8;   
+    int y = 5;   
     int i;
 
     //Parte superior
+    
     for (i = 0; i < ANCHO; i++) {
         MoverCursor(x + i, y);
         EsperarMiliSeg(TIEMPO_BASE);
-        printf("\033[38;5;228m*");  //Cambio de color a verde
+        printf("\033[38;5;228m═");  //Cambio de color a verde
         printf("\033[0m");      //Se regresa el color al blanco predeterminado para evitar alterar por completo la apariencia del cmd
+        MoverCursor(x + i, y+2);
+        printf("\033[38;5;228m═");  //Cambio de color a verde
+        printf("\033[0m");   
+        MoverCursor(x + i, y+4);
+        printf("\033[38;5;228m-");  //Cambio de color a verde
+        printf("\033[0m"); 
     }
+    MoverCursor(x, y);
+    printf("\033[38;5;228m╔");
+    MoverCursor(x+ANCHO-1, y);
+    printf("\033[38;5;228m╗");
+    
 
     //Laterales
     for (i = 1; i < ALTO - 1; i++) {
         MoverCursor(x, y + i);
         EsperarMiliSeg(TIEMPO_BASE);
-        printf("\033[38;5;32m*");
+        printf("\033[38;5;32m║");
         printf("\033[0m");
-        MoverCursor(x + ANCHO - 1, y + i);
+        MoverCursor(x + ANCHO-1, y + i);
         EsperarMiliSeg(TIEMPO_BASE);
-        printf("\033[38;5;32m*");
+        printf("\033[38;5;32m║");
         printf("\033[0m");
     }
+    MoverCursor(x, y+4);
+    printf("\033[38;5;228m╠");
+    MoverCursor(x+ANCHO-1, y+4);
+    printf("\033[38;5;228m╣");
 
     //Parte inferior
     for (i = 0; i < ANCHO; i++) {
         MoverCursor(x + i, y + ALTO - 1);
         EsperarMiliSeg(TIEMPO_BASE);
-        printf("\033[38;5;228m*");
+        printf("\033[38;5;228m═");
         printf("\033[0m");
     }
+    MoverCursor(x, y+ALTO-1);
+    printf("\033[38;5;228m╚");
+    MoverCursor(x+ANCHO-1, y+ALTO-1);
+    printf("\033[38;5;228m╝");
+
+    MoverCursor(x+ANCHO/2-5, y+1);
+    printf("\033[0m Monitor de CPU");
+    MoverCursor(x+ANCHO/2-6, y+3);
+    printf("\033[0m [ EN EJECUCION ]");
+
 }
 
 /*
