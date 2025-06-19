@@ -111,16 +111,15 @@ int main()
         p++;
     }
 
-    p=1;
+    p = 1;
     nodo *aux;
-    aux=c.frente;
+    aux = c.frente;
     while (p <= counter) // Mientras p sea menor al numero de procesos ingresados
     {
-        aux->e.tiempoInicio=clock();
-        aux=aux->siguiente;
+        aux->e.tiempoInicio = clock();
+        aux = aux->siguiente;
         p++;
     }
-
 
     atenderProceso();
     MoverCursor(0, 35);
@@ -196,7 +195,7 @@ void encolarProceso()
 {
     elemento nuevoProceso;
     nuevoProceso = generarProceso();
-    //nuevoProceso.tiempoInicio = clock(); // Se comienza a medir el tiempo de vida del proceso
+    // nuevoProceso.tiempoInicio = clock(); // Se comienza a medir el tiempo de vida del proceso
     Queue(&c, nuevoProceso);
     return;
 }
@@ -321,13 +320,15 @@ void atenderProceso()
             progreso = (porcentaje * barraTotal) / 100;
 
             MoverCursor(28, 10);
-            printf("Proceso: %-15s ID: %-5s", procesoAtendido.nombre, procesoAtendido.id);
+            printf("Proceso: %-15s", procesoAtendido.nombre);
             MoverCursor(28, 11);
             printf("Actividad: %-50s", procesoAtendido.actividad);
             MoverCursor(28, 12);
             printf("Tiempo transcurrido: %5.2f s", procesoAtendido.tiempoTotal);
-
-            MoverCursor(32, 14);
+            MoverCursor(28, 13);
+            printf("ID: %-5s", procesoAtendido.id);
+            
+            MoverCursor(42, 15);
             for (int i = 0; i < barraTotal; i++)
             {
                 if (i < progreso)
@@ -336,7 +337,7 @@ void atenderProceso()
                     printf("░");
             }
 
-            MoverCursor(73, 14);
+            MoverCursor(83, 15);
             printf("%d %%\n", porcentaje);
 
             Sleep(1000); // Simula atención por 1 segundo
