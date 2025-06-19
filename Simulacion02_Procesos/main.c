@@ -301,7 +301,7 @@ void atenderProceso()
         animacionProceso1();           // Simula una animación de entrada
 
         // Limpiar pantalla principal
-        for (i = 10; i <= 14; i++)
+        for (i = 10; i <= 15; i++)
         {
             MoverCursor(28, i);
             printf("                                                                             ");
@@ -320,25 +320,25 @@ void atenderProceso()
             progreso = (porcentaje * barraTotal) / 100;
 
             MoverCursor(28, 10);
-            printf("Proceso: %-15s", procesoAtendido.nombre);
+            printf("\033[38;5;254mProceso: \033[38;5;91m%-15s", procesoAtendido.nombre);
             MoverCursor(28, 11);
-            printf("Actividad: %-50s", procesoAtendido.actividad);
+            printf("\033[38;5;254mActividad: \033[38;5;91m%-50s", procesoAtendido.actividad);
             MoverCursor(28, 12);
-            printf("Tiempo transcurrido: %5.2f s", procesoAtendido.tiempoTotal);
+            printf("\033[38;5;254mTiempo transcurrido: \033[38;5;91m%5.2f s", procesoAtendido.tiempoTotal);
             MoverCursor(28, 13);
-            printf("ID: %-5s", procesoAtendido.id);
+            printf("\033[38;5;254mID: \033[38;5;91m%-5s", procesoAtendido.id);
             
             MoverCursor(42, 15);
             for (int i = 0; i < barraTotal; i++)
             {
                 if (i < progreso)
-                    printf("▓");
+                    printf("\033[38;5;91m▓");
                 else
-                    printf("░");
+                    printf("\033[38;5;254m░");
             }
 
             MoverCursor(83, 15);
-            printf("%d %%\n", porcentaje);
+            printf("\033[38;5;254m%d %%\n", porcentaje);
 
             Sleep(1000); // Simula atención por 1 segundo
             borrarAnimacionProceso1();
@@ -415,24 +415,24 @@ void dibujarCaja()
     int i;
 
     // Parte superior
-
-    for (i = 0; i < ANCHO; i++)
+    MoverCursor(x, y);
+    printf("\033[38;5;32m╔");
+    for (i = 1; i < ANCHO; i++)
     {
         MoverCursor(x + i, y);
         EsperarMiliSeg(TIEMPO_BASE);
-        printf("\033[38;5;228m═"); // Cambio de color a verde
+        printf("\033[38;5;32m═"); // Cambio de color a verde
         printf("\033[0m");         // Se regresa el color al blanco predeterminado para evitar alterar por completo la apariencia del cmd
         MoverCursor(x + i, y + 2);
-        printf("\033[38;5;228m═"); // Cambio de color a verde
+        printf("\033[38;5;32m═"); // Cambio de color a verde
         printf("\033[0m");
         MoverCursor(x + i, y + 4);
-        printf("\033[38;5;228m-"); // Cambio de color a verde
+        printf("\033[38;5;32m-"); // Cambio de color a verde
         printf("\033[0m");
     }
-    MoverCursor(x, y);
-    printf("\033[38;5;228m╔");
+    
     MoverCursor(x + ANCHO - 1, y);
-    printf("\033[38;5;228m╗");
+    printf("\033[38;5;32m╗");
 
     // Laterales
     for (i = 1; i < ALTO - 1; i++)
@@ -445,36 +445,43 @@ void dibujarCaja()
         EsperarMiliSeg(TIEMPO_BASE);
         printf("\033[38;5;32m║");
         printf("\033[0m");
+        
+        if (i==ALTO-2)
+        {
+            MoverCursor(x, y + i+1);
+            printf("\033[38;5;32m╚");
+        }
+        
+        
     }
     MoverCursor(x, y + 4);
-    printf("\033[38;5;228m╠");
+    printf("\033[38;5;32m╠");
     MoverCursor(x + ANCHO - 1, y + 4);
-    printf("\033[38;5;228m╣");
+    printf("\033[38;5;32m╣");
 
     // Parte inferior
-    for (i = 0; i < ANCHO; i++)
+    for (i = 1; i < ANCHO; i++)
     {
         MoverCursor(x + i, y + ALTO - 1);
         EsperarMiliSeg(TIEMPO_BASE);
-        printf("\033[38;5;228m═");
+        printf("\033[38;5;32m═");
         printf("\033[0m");
 
         if (i > 0 && i < (ANCHO - 1))
         {
             MoverCursor(x + i, y + ALTO - 3);
-            printf("\033[38;5;228m-"); // Cambio de color a verde
+            printf("\033[38;5;32m-"); // Cambio de color a verde
             printf("\033[0m");
         }
     }
-    MoverCursor(x, y + ALTO - 1);
-    printf("\033[38;5;228m╚");
+    
     MoverCursor(x + ANCHO - 1, y + ALTO - 1);
-    printf("\033[38;5;228m╝");
+    printf("\033[38;5;32m╝");
 
     MoverCursor(x + ANCHO / 2 - 5, y + 1);
-    printf("\033[38;5;63m Monitor de CPU");
+    printf("\033[38;5;246m Monitor de CPU");
     MoverCursor(x + ANCHO / 2 - 6, y + 3);
-    printf("\033[38;5;63m [ EN EJECUCION ]");
+    printf("\033[38;5;246m [ EN EJECUCION ]");
     printf("\033[0m");
 }
 
@@ -553,7 +560,7 @@ void animacionProceso1()
         printf("\033[0m");
         EsperarMiliSeg(TIEMPO_BASE);
     }
-    for (i = 18; i <= pos; i++)
+    for (i = 18; i <= pos-1; i++)
     {
         MoverCursor(i, y);
         printf("\033[38;5;104m*");
