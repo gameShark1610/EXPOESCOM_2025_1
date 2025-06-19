@@ -118,11 +118,24 @@ elemento generarProceso()
     MoverCursor(66,3);
     scanf("%s",&proceso.id);
 
-    MoverCursor(50,4);
-    printf("Tiempo para su atencion: ");
-    MoverCursor(75,4);
-    scanf("%d", &proceso.tiempo);
-    proceso.tiempoTotalDeEjecucion=proceso.tiempo;
+    while (1)
+    {
+        MoverCursor(50, 4);
+        printf("Tiempo para su atencion: ");
+        MoverCursor(75, 4);
+        if (scanf("%d", &proceso.tiempo)== 1)
+        {
+            proceso.tiempoTotalDeEjecucion = proceso.tiempo;
+            break; // Éxito: se leyó un número
+        }
+        else
+        {
+            MoverCursor(75, 4);
+            printf("Número inválido. Inténte de nuevo.\n");
+            // Limpiar el búfer de entrada
+            while ((c = getchar()) != '\n' && c != EOF);
+        }
+    }
 
     return proceso;
 }
@@ -159,7 +172,7 @@ void mostrarProceso()
     for(i = 1; i <5 ; i++)
     {
         MoverCursor(50,i);
-        printf("                                                       ");
+        printf("                                                                       ");
     }
     //Limpia los recuadros cada vez que se encola un nuevo proceso, para evitar mala estetica
     for(i=20;i<=23;i++)
