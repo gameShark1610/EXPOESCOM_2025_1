@@ -78,7 +78,7 @@ int main()
         printf("Ingrese la cantidad de procesos: ");
         validar1 = scanf("%d", &counter);
         MoverCursor(2, 3);
-        printf("Ingrese la cantidad de Quantums: ");
+        printf("Tiempo del Quantum: ");
         validar2 = scanf("%d", &cantQuantums);
         if (validar1 == 1 && validar2)
         {
@@ -341,8 +341,9 @@ void atenderProceso()
             printf("\033[38;5;254m%d %%\n", porcentaje);
 
             Sleep(1000); // Simula atención por 1 segundo
-            borrarAnimacionProceso1();
         }
+        borrarAnimacionProceso1();
+
 
         // Decide si reencolar o finalizar
         if (procesoAtendido.tiempo > 0)
