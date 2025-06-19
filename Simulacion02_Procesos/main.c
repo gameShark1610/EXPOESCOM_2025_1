@@ -231,6 +231,7 @@ la cola &c
 void atenderProceso()
 {
     elemento procesoAtendido;
+    int porcentaje;
     int y=12;
     int yImpresion=23;
     int i;
@@ -252,24 +253,27 @@ void atenderProceso()
 
         fin = clock(); //Se para el tiempo de vida del proceso, para mostrar en tiempo real el tiempo del mismo desde que fue encolado por primera vez
         procesoAtendido.tiempoTotal = (double)(fin - procesoAtendido.tiempoInicio) / CLOCKS_PER_SEC; //se imprime el tiempo
-        //progreso = (procesoAtendido.tiempoTotalDeEjecucion / (procesoAtendido.tiempoTotalDeEjecucion-procesoAtendido.tiempo)) * barraTotal;
+
+        procesoAtendido.tiempo--; //Se disminuye el quantum de 1 segundo al tiempo total de ejecucion del proceso
+        porcentaje=((procesoAtendido.tiempoTotalDeEjecucion-procesoAtendido.tiempo)*100)/procesoAtendido.tiempoTotalDeEjecucion;
+        progreso = (porcentaje*barraTotal) /100;
+
         MoverCursor(28 ,10);
         printf("Proceso: %-15s ID: %-5s", procesoAtendido.nombre, procesoAtendido.id);
         MoverCursor(28 ,11);
         printf("Actividad: %-50s", procesoAtendido.actividad);
         MoverCursor(28 ,12);
         printf("Tiempo transcurrido: %5.2f s", procesoAtendido.tiempoTotal);
-        /*
-        MoverCursor(32 ,12);
+        
+        MoverCursor(32 ,14);
         for (int i = 0; i < barraTotal; i++) {
             if (i < progreso) printf("▓");
             else printf("░");
-        }*/
-        MoverCursor(28 ,13);
-        printf("Variable tiempo:%d TiempoTotalEjec:%d %d %%\n",procesoAtendido.tiempo,procesoAtendido.tiempoTotalDeEjecucion, (((procesoAtendido.tiempoTotalDeEjecucion-procesoAtendido.tiempo)*100)/procesoAtendido.tiempoTotalDeEjecucion));
+        }
+        MoverCursor(73 ,14);
+        printf("%d %%\n",porcentaje);
         Sleep(1000); //Quantum de 1 segundo, se atenderá el proceso durante este tiempo
         borrarAnimacionProceso1();
-        procesoAtendido.tiempo--; //Se disminuye el quantum de 1 segundo al tiempo total de ejecucion del proceso
 
         //Si el tiempo total de ejecucion es mayor a cero, entonces el proceso no ha sido atendido completamente
         if(procesoAtendido.tiempo>0)
@@ -398,9 +402,10 @@ void dibujarCaja()
     printf("\033[38;5;228m╝");
 
     MoverCursor(x+ANCHO/2-5, y+1);
-    printf("\033[0m Monitor de CPU");
+    printf("\033[38;5;63m Monitor de CPU");
     MoverCursor(x+ANCHO/2-6, y+3);
-    printf("\033[0m [ EN EJECUCION ]");
+    printf("\033[38;5;63m [ EN EJECUCION ]");
+    printf("\033[0m"); 
 
 }
 
@@ -439,11 +444,11 @@ void dibujarMargen()
     for(i=0;i<ANCHOSHELL;i++)
     {
         MoverCursor(x+i,y);
-        printf("\033[38;5;32m*");
+        printf("\033[38;5;33m*");
         printf("\033[0m");
         EsperarMiliSeg(TIEMPO_BASE);
         MoverCursor(x+i,y+ALTOSHELL-1);
-        printf("\033[38;5;32m*");
+        printf("\033[38;5;33m*");
         printf("\033[0m");
         EsperarMiliSeg(TIEMPO_BASE);
     }
@@ -451,11 +456,11 @@ void dibujarMargen()
     for(i=1;i<=ALTOSHELL-1;i++)
     {
         MoverCursor(x,y+i);
-        printf("\033[38;5;228m*");
+        printf("\033[38;5;33m*");
         printf("\033[0m");
         EsperarMiliSeg(TIEMPO_BASE);
         MoverCursor(x+ANCHOSHELL-1,y+i);
-        printf("\033[38;5;228m*");
+        printf("\033[38;5;33m*");
         printf("\033[0m");
         EsperarMiliSeg(TIEMPO_BASE);
     }
