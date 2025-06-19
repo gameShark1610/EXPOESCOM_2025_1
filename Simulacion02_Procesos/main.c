@@ -52,13 +52,15 @@ void dibujarCuadro2();
 //-----------VARIABLES GLOBALES------------------------
 cola c;         // Cola que contiene los procesos a ser atendidos
 cola atendidos; // Cola que contendrá los procesos atendidos
-int counter, hayProceso;
+int counter, hayProceso, cantQuantums;
 clock_t fin; // Variable que permite
 
 int main()
 {
     system("chcp 65001 > nul"); // Cambia a UTF-8
     int xTitulo, yTitulo;       // Dimensiones del titulo (opcionales a mostrar en consola)
+    int cBuffer;
+    int validar1, validar2;
 
     BorrarPantalla();
     dibujarMargen();
@@ -69,9 +71,37 @@ int main()
     Initialize(&atendidos);
     MoverCursor(2, 1);
     printf("Simulacion de procesos del sistema operativo\n");
-    MoverCursor(2, 2);
-    printf("Ingrese la cantidad de procesos: ");
-    scanf("%d", &counter);
+
+    while (1)
+    {
+        MoverCursor(2, 2);
+        printf("Ingrese la cantidad de procesos: ");
+        validar1 = scanf("%d", &counter);
+        MoverCursor(2, 3);
+        printf("Ingrese la cantidad de Quantums: ");
+        validar2 = scanf("%d", &cantQuantums);
+        if (validar1 == 1 && validar2)
+        {
+            MoverCursor(2, 4);
+            printf("                                       ");
+            break; // Éxito: se leyó un número
+        }
+        else
+        {
+            MoverCursor(2, 4);
+            printf("Numero inválido. Inténte de nuevo.\n");
+
+            MoverCursor(2, 2);
+            printf("                                                               ");
+            MoverCursor(2, 3);
+            printf("                                                               ");
+
+            // Limpiar el búfer de entrada
+            while ((cBuffer = getchar()) != '\n' && cBuffer != EOF)
+                ;
+        }
+    }
+
     dibujarCuadro1();
     dibujarCuadro2();
     while (p <= counter) // Mientras p sea menor al numero de procesos ingresados
@@ -80,6 +110,18 @@ int main()
         mostrarProceso();
         p++;
     }
+
+    p=1;
+    nodo *aux;
+    aux=c.frente;
+    while (p <= counter) // Mientras p sea menor al numero de procesos ingresados
+    {
+        aux->e.tiempoInicio=clock();
+        aux=aux->siguiente;
+        p++;
+    }
+
+
     atenderProceso();
     MoverCursor(0, 35);
     return 0;
@@ -154,7 +196,7 @@ void encolarProceso()
 {
     elemento nuevoProceso;
     nuevoProceso = generarProceso();
-    nuevoProceso.tiempoInicio = clock(); // Se comienza a medir el tiempo de vida del proceso
+    //nuevoProceso.tiempoInicio = clock(); // Se comienza a medir el tiempo de vida del proceso
     Queue(&c, nuevoProceso);
     return;
 }
@@ -250,69 +292,78 @@ void atenderProceso()
     int y = 12;
     int yImpresion = 23;
     int i;
+    int j = 0;
     int barraTotal = 40;
     int progreso;
 
     while (!Empty(&c)) // Mientras la cola no esté vacía
     {
         procesoAtendido = Dequeue(&c); // Se desencola el proceso que en ese momento esté al frente
-        animacionProceso1();           // Simula una animacion de entrada a la pantalla principal
-        // mostrarProceso();
+        animacionProceso1();           // Simula una animación de entrada
 
-        // Limpiar pantalla principal, para simular que el siguiente proceso ha sido atendido
+        // Limpiar pantalla principal
         for (i = 10; i <= 14; i++)
         {
             MoverCursor(28, i);
             printf("                                                                             ");
         }
 
-        fin = clock();                                                                               // Se para el tiempo de vida del proceso, para mostrar en tiempo real el tiempo del mismo desde que fue encolado por primera vez
-        procesoAtendido.tiempoTotal = (double)(fin - procesoAtendido.tiempoInicio) / CLOCKS_PER_SEC; // se imprime el tiempo
-
-        procesoAtendido.tiempo--; // Se disminuye el quantum de 1 segundo al tiempo total de ejecucion del proceso
-        porcentaje = ((procesoAtendido.tiempoTotalDeEjecucion - procesoAtendido.tiempo) * 100) / procesoAtendido.tiempoTotalDeEjecucion;
-        progreso = (porcentaje * barraTotal) / 100;
-
-        MoverCursor(28, 10);
-        printf("Proceso: %-15s ID: %-5s", procesoAtendido.nombre, procesoAtendido.id);
-        MoverCursor(28, 11);
-        printf("Actividad: %-50s", procesoAtendido.actividad);
-        MoverCursor(28, 12);
-        printf("Tiempo transcurrido: %5.2f s", procesoAtendido.tiempoTotal);
-
-        MoverCursor(32, 14);
-        for (int i = 0; i < barraTotal; i++)
+        // Atender durante quantum segundos o hasta que termine
+        j = 0;
+        while (j < cantQuantums && procesoAtendido.tiempo > 0)
         {
-            if (i < progreso)
-                printf("▓");
-            else
-                printf("░");
-        }
-        MoverCursor(73, 14);
-        printf("%d %%\n", porcentaje);
-        Sleep(1000); // Quantum de 1 segundo, se atenderá el proceso durante este tiempo
-        borrarAnimacionProceso1();
+            fin = clock(); // Actualiza tiempo real
+            procesoAtendido.tiempoTotal = (double)(fin - procesoAtendido.tiempoInicio) / CLOCKS_PER_SEC;
+            procesoAtendido.tiempo--; // Disminuye tiempo restante
+            j++;
 
-        // Si el tiempo total de ejecucion es mayor a cero, entonces el proceso no ha sido atendido completamente
+            porcentaje = ((procesoAtendido.tiempoTotalDeEjecucion - procesoAtendido.tiempo) * 100) / procesoAtendido.tiempoTotalDeEjecucion;
+            progreso = (porcentaje * barraTotal) / 100;
+
+            MoverCursor(28, 10);
+            printf("Proceso: %-15s ID: %-5s", procesoAtendido.nombre, procesoAtendido.id);
+            MoverCursor(28, 11);
+            printf("Actividad: %-50s", procesoAtendido.actividad);
+            MoverCursor(28, 12);
+            printf("Tiempo transcurrido: %5.2f s", procesoAtendido.tiempoTotal);
+
+            MoverCursor(32, 14);
+            for (int i = 0; i < barraTotal; i++)
+            {
+                if (i < progreso)
+                    printf("▓");
+                else
+                    printf("░");
+            }
+
+            MoverCursor(73, 14);
+            printf("%d %%\n", porcentaje);
+
+            Sleep(1000); // Simula atención por 1 segundo
+            borrarAnimacionProceso1();
+        }
+
+        // Decide si reencolar o finalizar
         if (procesoAtendido.tiempo > 0)
         {
-            Queue(&c, procesoAtendido); // Se reencola el proceso
-            hayProceso++;               // Al menos un proceso ya pasó por la pantalla principal
+            Queue(&c, procesoAtendido); // Reencola el proceso si aún le falta tiempo
+            hayProceso++;               // Marca que hubo actividad
         }
         else
         {
-            fin = clock(); // Se pone fin al tiempo de vida del proceso
+            fin = clock(); // Marca el fin del proceso
             procesoAtendido.tiempoTotal = (double)(fin - procesoAtendido.tiempoInicio) / CLOCKS_PER_SEC;
-            Queue(&atendidos, procesoAtendido); // Se encola a la cola de procesos atendidos
-            animacionProceso2();                // Simula la salida de la pantalla principal
+            Queue(&atendidos, procesoAtendido); // Lo manda a la cola de procesos terminados
+            animacionProceso2();                // Animación de salida
             borrarAnimacionProceso2();
         }
-        // Actualizacion grafica de las tablas y los procesos
+
+        // Actualiza la interfaz
         mostrarProceso();
         mostrarProcesosAtendidos();
     }
 
-    // Se vacian graficamente las tablas de "Ultimo proceso atendido" y "proximo proceso a atender"
+    // Limpia área gráfica si ya no hay procesos
     if (Empty(&c))
     {
         for (i = 10; i <= 13; i++)
