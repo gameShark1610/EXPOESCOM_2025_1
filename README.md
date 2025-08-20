@@ -3,10 +3,10 @@
 **Authors:**
 
 * TADColaDin.c : Edgardo Adrian Franco Martinez
-* Current implementation: Escompiladores ():
-* Arciniega Valdez Yair Emmanuel
-* Marcial Jiménez Víctor Ariel
-* Ramírez Hernández Edwin
+* Current implementation: Escompiladores:
+  - Arciniega Valdez Yair Emmanuel
+  - Marcial Jiménez Víctor Ariel
+  - Ramírez Hernández Edwin
 
 **Version:** 1.100.2 (May 2025)
 
