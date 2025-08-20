@@ -1,62 +1,118 @@
-# Animated Process Manager Simulation (Round Robin)
+# 🖥️ Animated Process Manager (Round Robin Simulation)
 
-**Authors:**
+This project is an **animated simulation of a process scheduler** using a **dynamic queue (TAD Cola Dinámica)**, without considering process priorities. It implements the **Round Robin** scheduling algorithm, one of the most widely used CPU scheduling policies.
 
-* TADColaDin.c : Edgardo Adrian Franco Martinez
-* Current implementation: Escompiladores:
+Processes are given a fixed time slice (quantum) of **1 second**.
+
+* If a process does not finish during its quantum, it is requeued.
+* If a process finishes, it is moved to the **attended processes queue**.
+
+The program displays the simulation **graphically inside the Windows CMD**, including CPU usage, execution progress, and process animations.
+
+---
+
+## 👤 Authors
+
+* **Base implementation**: *Edgardo Adrián Franco Martínez*
+* **Implementation & adaptation**: *Escompiladores*
   - Arciniega Valdez Yair Emmanuel
   - Marcial Jiménez Víctor Ariel
   - Ramírez Hernández Edwin
 
-**Version:** 1.100.2 (May 2025)
 
-## Description
+**Version:** `1.100.2` (May 2025)
 
-This program simulates a **Round Robin CPU scheduling algorithm** without considering process priorities. Modern processors often use this method, which assigns each process a fixed CPU time called a *quantum*. If the process does not finish in this time, it is interrupted and moved to the end of the ready queue, allowing the next process to run.
+---
 
-This simulation:
+## 📂 Project Structure
 
-* Takes a list of processes provided by the user.
-* Processes them one by one with a quantum of 1 second.
-* Moves completed processes to the "Processed" queue.
-* Re-enqueues incomplete processes until they finish.
-* Animates the process queue in the command prompt.
-
-## Files
-
-* `TADColaDin.c` — Implementation of the dynamic queue (TAD Cola).
-* `TADColaDin.h` — Header file for the dynamic queue.
-* `main.c` — Main program that runs the simulation.
-* `presentacionWin.c` — Handles the animated visualization in the Windows CMD.
-* `presentacion.h` — Header file for presentation/animation functions.
-* `procesos.exe` — Precompiled executable (Windows).
-
-## Compilation
-
-For Windows:
-
-```bash
-gcc presentacionWin.c TADColaDin.c main.c -o main.exe
+```
+📁 RoundRobin-Scheduler
+├── main.c               # Main program logic
+├── TADColaDin.c         # Dynamic queue implementation
+├── TADColaDin.h         # Queue header file
+├── presentacionWin.c    # Windows CMD drawing and animations
+├── presentacion.h       # Drawing functions header
+├── procesos.exe         # Compiled executable (Windows)
+└── README.md            # Documentation
 ```
 
-For Linux/macOS:
+---
+
+## ⚙️ Compilation
+
+Compile the project using **GCC**:
+
+### Windows:
 
 ```bash
-gcc main.c presentacionWin.c TADColaDin.c -o main
+gcc presentacionWin.c TADColaDin.c main.c -o procesos.exe
 ```
 
-Run the executable after compilation:
+### Linux / WSL (may require adaptation for Windows.h dependencies):
 
 ```bash
-./main.exe   # Windows
-./main       # Linux/macOS
+gcc main.c presentacionWin.c TADColaDin.c -o procesos
 ```
 
-## How it works
+---
 
-* The program visualizes the process queue in the command prompt.
-* Each process is served for 1 second (quantum).
-* Processes that finish are moved to the "Processed" queue.
-* Processes that do not finish are placed back at the end of the queue.
-* The simulation continues until all processes are completed.
+## 🚀 Usage
+
+1. Run the program:
+
+   ```bash
+   ./procesos.exe
+   ```
+
+2. Enter the **number of processes** to simulate.
+
+3. For each process, provide:
+
+   * Name
+   * Activity
+   * ID
+   * Execution time
+
+4. The CMD will display:
+
+   * **CPU monitor** with currently running process
+   * **Progress bar** showing execution percentage
+   * **Next process to be attended**
+   * **Last process attended**
+   * **Table of completed processes with total execution times**
+
+---
+
+## 🎮 Features
+
+* Round Robin process scheduling (1 second quantum)
+* Dynamic queue implementation
+* Real-time **animated display** in CMD
+* Process info visualization (name, ID, activity, execution time)
+* Execution time measurement with `clock()`
+* Graphical animations for process entry/exit
+
+---
+
+## CMD output
+
+![WhatsApp Image 2025-08-20 at 3 44 24 PM](https://github.com/user-attachments/assets/daa4b5d6-8e20-4644-854b-6231429225d8)
+
+
+---
+
+## 🛠️ Requirements
+
+* **Windows CMD (120x30 recommended size)**
+* **GCC compiler** (e.g., MinGW for Windows)
+* ANSI escape code support for colors
+
+---
+
+## 📖 Notes
+
+* This simulation does **not** consider process priorities.
+* Quantum is fixed to **1 second**, but can be modified in `#define TIEMPO_BASE`.
+* Designed for **educational purposes** in Operating Systems courses (ESCOM-IPN).
 
